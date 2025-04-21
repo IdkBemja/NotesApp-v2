@@ -60,9 +60,10 @@
     align-self: flex-end;
 }
 
-.login-section > a {
+.login-section > p {
     text-decoration: none;
     color: #333;
     font-size: 14px;
     text-align: justify;
+    cursor: pointer;
 }
