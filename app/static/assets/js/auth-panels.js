@@ -1,3 +1,5 @@
+
+
 $(document).ready(function() {
 
     showLoginPanel();
@@ -17,6 +19,7 @@ function showLoginPanel() {
     const login_panelHTML = `
     <section class="login-section">
             <h1>Iniciar Sesión</h1>
+            <div class="alert" style="display: none"></div>
             <form id="login-form" method="POST" action="">
                 <div class="form-group">
                     <label for="username">Usuario</label>
@@ -43,6 +46,7 @@ function showRegisterPanel() {
     const register_panelHTML = `
     <section class="register-section">
             <h1>Registrarse</h1>
+            <div class="alert" style="display: none"></div>
             <form action="" id="register-form">
                 <div class="form-group">
                     <label for="username">Usuario</label>
@@ -57,8 +61,8 @@ function showRegisterPanel() {
                     <input type="password" id="password" name="password" placeholder="Contraseña" required>
                 </div>
                 <div class="form-group">
-                    <label for="confirm_passwd">Repite Contraseña</label>
-                    <input type="password" id="confirm_passwd" name="confirm_passwd" placeholder="Repite Contraseña" required>
+                    <label for="confirm_password">Repite Contraseña</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Repite Contraseña" required>
                 </div>
                 <div class="form-group">
                     <button type="submit">Registrarse</button>
@@ -70,6 +74,27 @@ function showRegisterPanel() {
 
     main_container.innerHTML = register_panelHTML;
 }
+
+function showAlert(message) {
+    const alertDiv = document.querySelector('.alert');
+    if (!alertDiv) {
+        console.error("No se encontró el contenedor '.alert'.");
+        return;
+    }
+
+    // Verificar si el contenedor '.alert' es hijo de '.register-section' o '.login-section'
+    const parentSection = alertDiv.closest('.register-section') || alertDiv.closest('.login-section');
+    if (!parentSection) {
+        console.error("El contenedor '.alert' no es hijo de '.register-section' ni de '.login-section'.");
+        return;
+    }
+
+    // Mostrar el mensaje en el contenedor '.alert'
+    alertDiv.innerHTML = message;
+    alertDiv.style.display = 'block';
+}
+
+window.showAlert = showAlert;
 
 function cleanPanels() {
     const main_container = document.getElementById('main-container');
