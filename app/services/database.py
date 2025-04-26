@@ -45,6 +45,12 @@ class Note(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship('User', back_populates='notes')
 
+class BlacklistedToken(Base):
+    __tablename__ = 'blacklisted_tokens'
+    id = Column(Integer, primary_key=True)
+    token = Column(String(255), unique=True)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+
 def init_db():
     engine = create_engine('sqlite:///database.db')
 

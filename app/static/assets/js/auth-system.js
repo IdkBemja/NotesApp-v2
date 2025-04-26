@@ -85,11 +85,107 @@ $(document).ready(function() {
             if (formData) {
                 console.log("Registro!");
                 console.log(formData);
+                registerUser(formData);
             }
         });
 });
 
 
-function login() {
-    console.log("login");
+async function login(formData) {
+    try {
+        const response = await fetch("/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem("token", result.token);
+            ShowDashboard();
+        } else {
+            showAlert(result.message || "Error en el inicio de sesión.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        showAlert("Error al conectar con el servidor.");
+    }
+}
+
+async function registerUser(formData) {
+    try {
+        const response = await fetch("/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem("token", result.token);
+            ShowDashboard();
+        } else {
+            showAlert(result.message || "Error en el registro.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        showAlert("Error al conectar con el servidor.");
+    }
+}
+
+function getUserFromToken() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        return null;
+    }
+
+    try {
+        const payload = jwt.decode(token);
+        return payload;
+    } catch (error) {
+        console.error("Error al decodificar el token:", error);
+        return null;
+    }
+}
+
+async function getUserInfo() {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+        console.error("No se pudo obtener el user_id del token.");
+        return null;
+    }
+
+    try {
+        const response = await fetch(`/api/get_user/${userId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (response.ok) {
+            const userInfo = await response.json();
+            return userInfo;
+        } else {
+            console.error("Error al obtener los datos del usuario:", await response.json());
+            return null;
+        }
+    } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+        return null;
+    }
+}
+
+function logout(){
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
+    console.log("Logout!");
+    cleanPanels();
+    showLoginPanel();
 }
