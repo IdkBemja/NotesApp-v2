@@ -50,6 +50,10 @@ async function refreshToken() {
         if (response.ok && result.token) {
             localStorage.setItem("token", result.token);
             console.log("Token renovado:", result.token);
+        } else if (result.message == "Token inválido.") {
+            logout();
+            showAlert("Por favor, inicia sesión nuevamente.");
+            console.warn(result.message || "No se pudo renovar el token.");
         } else {
             console.warn(result.message || "No se pudo renovar el token.");
         }
@@ -98,5 +102,7 @@ async function protectedRequest(url, method = "GET", body = null) {
     }
 
     const response = await fetch(url, options);
-    return response.json();
+    return response.json(); 
 }
+
+window.protectedRequest = protectedRequest;

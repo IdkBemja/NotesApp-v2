@@ -9,6 +9,19 @@ $( document ).ready(function() {
         cleanDashboard();
         showNotes();
     });
+
+    $(document).on('click', '#add-note', function() {
+        cleanDashboard();
+        addNote();
+    });
+
+    $(document).on('click', '#edit-note', function() {
+        cleanDashboard();
+    });
+
+    $(document).on('click', '#edit-lastnote', function() {
+        cleanDashboard();
+    });
 });
 
 function showDashboard(){
@@ -16,7 +29,7 @@ function showDashboard(){
     const dashboardHTML = `
     <section class="dashboard-section">
         <div class="dashboard-header">
-            <button id="logout"><i class="bi bi-power"></i> Cerrar Sesión</button>
+            <button id="logout"><i class="bi bi-power"></i></button>
             <ul class="dashboard-nav">
                 <li id="home"><i class="bi bi-house"></i> Inicio</li>
                 <li id="mynotes"><i class="bi bi-archive"></i> Mis Notas</li>
@@ -53,57 +66,201 @@ async function showhomepage(){
         return;
     }
 
+    let lastnote;
+    try {
+        lastnote = await protectedRequest(`/notes/latest/${userid}`, 'GET');
+        if (!lastnote || lastnote.error) {
+            lastnote = null; // Si no hay notas, dejamos `lastnote` como null
+        }
+    } catch (error) {
+        console.error('Error al obtener la última nota:', error);
+        lastnote = null;
+    }
+
     const homepageHTML = `
     <div class="homepage">
         <h1>Bienvenido/a ${user.username}</h1>
         <p>Aquí puedes capturar y organizar tus pensamientos e ideas, añadiendo títulos, descripciones, categorías, etiquetas y más. ¡Comienza hoy tu camino hacia una mejor gestión de notas!.</p>
         <p>Aqui Tienes tu ultima nota creada:</p>
-        <div class="homepage-lastnote">
-            <h2>{lastnote.title}</h2>
-            <p>{lastnote.content}</p>
-            <p class="note-date">{lastnote.created_at}</p>
-            <div class="homepage-lastnote-actions">
-                <button id="edit-lastnote">Editar Nota</button>
-                <button id="delete-lastnote">Eliminar Nota</button>
-            </div>
-        </div>
+        ${
+            lastnote
+                ? `
+                <div class="homepage-lastnote">
+                    <h2>${lastnote.title}</h2>
+                    <p class="note-content">${lastnote.content}</p>
+                    <p class="note-date">Fecha de creación: ${lastnote.created_at}</p>
+                    <div class="homepage-lastnote-actions">
+                        <button onclick="editNote(${lastnote.id})" id="edit-lastnote"><i class="bi bi-pencil-square"></i></button>
+                        <button onclick="deleteNote(${lastnote.id})" id="delete-lastnote"><i class="bi bi-trash-fill"></i></button>
+                    </div>
+                </div>
+                `
+                : `<p>No tienes notas creadas aún. ¡Añade tu primera nota!</p>`
+        }
     </div>
-    `
+    `;
 
     dashboard_container.innerHTML = homepageHTML;
 }
 
 window.showDashboard = showDashboard;
 
-async function showNotes(){
+async function showNotes() {
     const dashboard_container = document.querySelector('.dashboard-container');
+
+    let notes;
+    try {
+        notes = await protectedRequest('/user/notes', 'GET');
+        if (!notes || notes.error) {
+            dashboard_container.innerHTML = `
+            <p class="notes-error">${notes?.error || 'No tienes notas disponibles.'}</p>
+            <button id="add-note"><i class="bi bi-plus-circle-fill"></i> Añadir Nota</button>
+            `;
+            return;
+        }
+    } catch (error) {
+        console.error('Error al cargar las notas:', error);
+        dashboard_container.innerHTML = '<p class="error">Error al cargar las notas. Por favor, intenta nuevamente.</p>';
+        return;
+    }
+
     const notesHTML = `
     <div class="notes">
         <h1>Mis Notas</h1>
         <div class="notes-options">
-            <button id="add-note">Añadir Nota</button>
-            <button id="delete-note">Eliminar Nota</button>
+            <button id="add-note"><i class="bi bi-plus-circle-fill"></i></button>
         </div>
         <div class="notes-list">
-            <div class="note-item">
-                <h2>Nota 1</h2>
-                <p>Contenido de la nota 1</p>
-                <p class="note-date">Fecha de creación: 2023-10-01</p>
-                <div class="note-actions">
-                    <button id="edit-note">Editar Nota</button>
-                    <button id="delete-note">Eliminar Nota</button>
+            ${notes.map(note => `
+                <div class="note-item">
+                    <h2>${note.title}</h2>
+                    <p class="note-content">${note.content}</p>
+                    <p class="note-date">Fecha de creación: ${note.created_at}</p>
+                    <div class="note-actions">
+                        <button onclick="editNote(${note.id})" id="edit-note"><i class="bi bi-pencil-square"></i></button>
+                        <button onclick="deleteNote(${note.id})" id="delete-note"><i class="bi bi-trash-fill"></i></button>
+                    </div>
                 </div>
-            </div>
-            <div class="note-item">
-                <h2>Nota 2</h2>
-                <p>Contenido de la nota 2</p>
-                <p class="note-date">Fecha de creación: 2023-10-02</p>
-                <div class="note-actions">
-                    <button id="edit-note">Editar Nota</button>
-                    <button id="delete-note">Eliminar Nota</button>
-                </div>
+            `).join('')}
         </div>
     </div>
-    `
+    `;
     dashboard_container.innerHTML = notesHTML;
+
+    document.getElementById('add-note').addEventListener('click', addNote);
 }
+
+async function addNote() {
+    const dashboard_container = document.querySelector('.dashboard-container');
+    const addNoteHTML = `
+    <div class="notes">
+        <h1>Añadir Nota</h1>
+        <div class="add-note">
+            <form id="add-note-form">
+                <label for="title">Título</label>
+                <input type="text" id="title" name="title" maxlength="20" required>
+                <label for="content">Contenido</label>
+                <textarea id="content" name="content" maxlength="255" required></textarea>  
+                <button type="submit" id="add-note-submit">Guardar Nota</button>
+            </form>
+        </div>  
+    </div>
+    `
+    dashboard_container.innerHTML = addNoteHTML;
+
+    const form = document.getElementById('add-note-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = {
+            title: document.getElementById('title').value,
+            content: document.getElementById('content').value
+        };
+
+        try {
+            const response = await protectedRequest('/notes/add', 'POST', formData);
+            if (response.success) {
+                showNotes();
+            } else {
+                alert(response.error || 'Error al añadir la nota.');
+            }
+        } catch (error) {
+            console.error('Error al añadir la nota:', error);
+        }
+    });
+}
+
+async function editNote(noteId) {
+    const dashboard_container = document.querySelector('.dashboard-container');
+
+    let noteData;
+    try {
+        noteData = await protectedRequest(`/notes/${noteId}`, 'GET');
+        if (!noteData) {
+            console.log('No se pudo cargar la nota.');
+            return;
+        }
+    } catch (error) {
+        console.error('Error al cargar la nota:', error);
+        return;
+    }
+
+    const editNoteHTML = `
+    <div class="notes">
+        <h1>Editar Nota</h1>
+        <div class="edit-note">
+            <form id="edit-note-form">
+                <label for="title">Título</label>
+                <input type="text" id="title" name="title" maxlength="20" value="${noteData.title}" required>
+                <label for="content">Contenido</label>
+                <textarea id="content" name="content" maxlength="255" required>${noteData.content}</textarea>  
+                <button type="submit" id="edit-note-submit">Actualizar Nota</button>
+            </form>
+        </div>
+    </div>
+    `;
+    dashboard_container.innerHTML = editNoteHTML;
+
+    const form = document.getElementById('edit-note-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = {
+            title: document.getElementById('title').value,
+            content: document.getElementById('content').value
+        };
+
+        try {
+            const response = await protectedRequest(`/notes/edit/${noteId}`, 'POST', formData);
+            if (response.success) {
+                showNotes();
+            } else {
+                alert(response.error || 'Error al actualizar la nota.');
+            }
+        } catch (error) {
+            console.error('Error al actualizar la nota:', error);
+        }
+    });
+}
+
+window.editNote = editNote;
+
+async function deleteNote(noteId) {
+    if (!noteId) {
+        console.log('No se proporcionó un ID de nota válido.');
+        return;
+    }
+
+    try {
+        const response = await protectedRequest(`/notes/remove/${noteId}`, 'DELETE');
+        if (response.success) {
+            showNotes();
+        } else {
+            alert(response.error || 'Error al eliminar la nota.');
+        }
+    } catch (error) {
+        console.error('Error al eliminar la nota:', error);
+    }
+}
+
+window.deleteNote = deleteNote;

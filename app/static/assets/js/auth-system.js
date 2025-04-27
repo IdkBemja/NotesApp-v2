@@ -160,3 +160,5 @@ function logout() {
     cleanPanels();
     showLoginPanel();
 }
+
+window.logout = logout;

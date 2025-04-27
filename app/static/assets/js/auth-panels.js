@@ -29,7 +29,7 @@ function showLoginPanel() {
                     <label for="password">Contraseña</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <a href="#">¿Olvido La Contraseña?</a>
+                <!-- <a href="#">¿Olvido La Contraseña?</a> -->
                 <div class="form-group">
                     <button type="submit">Iniciar Sesión</button>
                 </div>
@@ -83,7 +83,6 @@ function showAlert(message) {
         return;
     }
 
-    // Verificar si el contenedor '.alert' es hijo de '.register-section' o '.login-section'
     const parentSection = alertDiv.closest('.register-section') || alertDiv.closest('.login-section');
     if (!parentSection) {
         console.error("El contenedor '.alert' no es hijo de '.register-section' ni de '.login-section'.");

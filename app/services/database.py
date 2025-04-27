@@ -37,10 +37,10 @@ class Note(Base):
     __tablename__ = 'notes'
     id = Column(Integer, primary_key=True)
     title = Column(String(45))
-    description = Column(String(255))
-    status = Column(String(8))
+    content = Column(String(255))
+    # status = Column(String(8))
     # category = Column(String(45))
-    tags = Column(String(255))
+    # tags = Column(String(255))
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
     user_id = Column(Integer, ForeignKey('users.id'))
