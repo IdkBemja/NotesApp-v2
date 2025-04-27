@@ -1,8 +1,8 @@
 
 # Note Application v2
-Also this app is a remake of an old project called Simple Note application with new features like JWT, Async dynamic page using javascript.
+this app is a remake of an old project called "Simple Note application" with new features like JWT, Async dynamic page using javascript. [Original Version here](https://github.com/IdkBemja/SimpleNoteApp)
 
-This is a user-friendly  open-source note-taking application designed to help users keep track of their thoughts, ideas, and tasks. The app allows users to create, edit, and delete notes, each of which can be categorized for easy organization.
+a user-friendly  open-source note-taking application designed to help users keep track of their thoughts, ideas, and tasks. The app allows users to create, edit, and delete notes, each of which can be categorized for easy organization.
 
 ## Features
 
