@@ -1,3 +1,38 @@
+// Obtener información del usuario desde el token
+function getUserFromToken() {
+    const token = localStorage.getItem("token");
+    if (!token || isTokenExpired(token)) {
+        return null;
+    }
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1])); // Decodificar el payload del token
+        return payload.user_id;
+    } catch (error) {
+        console.error("Error al decodificar el token:", error);
+        return null;
+    }
+}
+window.getUserFromToken = getUserFromToken;
+
+function isTokenExpired(token) {
+    if (!token) {
+        console.error("El token no existe o es inválido.");
+        return true;
+    }
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const currentTime = Math.floor(Date.now() / 1000); 
+        return payload.exp < currentTime;
+    } catch (error) {
+        console.error("Error al verificar el token:", error);
+        return true;
+    }
+}
+
+window.isTokenExpired = isTokenExpired;
+
 async function refreshToken() {
     const token = localStorage.getItem("token");
 
@@ -22,6 +57,31 @@ async function refreshToken() {
         console.error("Error al renovar el token:", error);
     }
 }
+
+async function fetchUserData(userId) {
+    try {
+        const response = await fetch(`/api/get_user/${userId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (response.ok) {
+            const userData = await response.json();
+            return userData;
+        } else {
+            console.error("Error al obtener los datos del usuario:", await response.json());
+            return null;
+        }
+    } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+        return null;
+    }
+}
+
+window.fetchUserData = fetchUserData;
+
 
 async function protectedRequest(url, method = "GET", body = null) {
     await refreshToken();

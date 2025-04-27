@@ -40,6 +40,7 @@ $(document).ready(function() {
     
             if (formData) {
                 console.log(formData);
+                login(formData);
             }
         });
     
@@ -88,9 +89,14 @@ $(document).ready(function() {
                 registerUser(formData);
             }
         });
+
+        $(document).on('click', '#logout', function(event) {
+            event.preventDefault();
+            logout();
+        });
 });
 
-
+// Manejar el inicio de sesión
 async function login(formData) {
     try {
         const response = await fetch("/login", {
@@ -105,7 +111,14 @@ async function login(formData) {
 
         if (response.ok) {
             localStorage.setItem("token", result.token);
-            ShowDashboard();
+
+            if (isTokenExpired(result.token)) {
+                showAlert("El token ha expirado. Por favor, inicia sesión nuevamente.");
+                logout();
+                return;
+            }
+
+            showDashboard();
         } else {
             showAlert(result.message || "Error en el inicio de sesión.");
         }
@@ -115,6 +128,7 @@ async function login(formData) {
     }
 }
 
+// Manejar el registro de usuario
 async function registerUser(formData) {
     try {
         const response = await fetch("/register", {
@@ -129,7 +143,7 @@ async function registerUser(formData) {
 
         if (response.ok) {
             localStorage.setItem("token", result.token);
-            ShowDashboard();
+            showDashboard();
         } else {
             showAlert(result.message || "Error en el registro.");
         }
@@ -139,52 +153,9 @@ async function registerUser(formData) {
     }
 }
 
-function getUserFromToken() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        return null;
-    }
-
-    try {
-        const payload = jwt.decode(token);
-        return payload;
-    } catch (error) {
-        console.error("Error al decodificar el token:", error);
-        return null;
-    }
-}
-
-async function getUserInfo() {
-    const userId = getUserIdFromToken();
-    if (!userId) {
-        console.error("No se pudo obtener el user_id del token.");
-        return null;
-    }
-
-    try {
-        const response = await fetch(`/api/get_user/${userId}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-
-        if (response.ok) {
-            const userInfo = await response.json();
-            return userInfo;
-        } else {
-            console.error("Error al obtener los datos del usuario:", await response.json());
-            return null;
-        }
-    } catch (error) {
-        console.error("Error al conectar con el servidor:", error);
-        return null;
-    }
-}
-
-function logout(){
+// Cerrar sesión
+function logout() {
     localStorage.removeItem("token");
-    localStorage.removeItem("user_id");
     console.log("Logout!");
     cleanPanels();
     showLoginPanel();

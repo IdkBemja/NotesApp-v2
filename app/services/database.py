@@ -17,6 +17,7 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(String(45))
+    email = Column(String(255), unique=True)
     password = Column(String(255))
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))

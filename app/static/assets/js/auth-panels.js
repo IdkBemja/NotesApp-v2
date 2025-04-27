@@ -40,6 +40,7 @@ function showLoginPanel() {
 
     main_container.innerHTML = login_panelHTML;
 }
+window.showLoginPanel = showLoginPanel;
 
 function showRegisterPanel() {
     const main_container = document.getElementById('main-container');
@@ -100,3 +101,5 @@ function cleanPanels() {
     const main_container = document.getElementById('main-container');
     main_container.innerHTML = '';
 }
+
+window.cleanPanels = cleanPanels;

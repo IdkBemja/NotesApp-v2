@@ -48,7 +48,7 @@ def register():
     username = data['username']
     email = data['email']
     password = data['password']
-    password2 = data['password2']
+    password2 = data['confirm_password']
 
     if username == password:
         return jsonify({"message": "El nombre de usuario y la contraseña no pueden ser iguales."}), 400
@@ -72,13 +72,14 @@ def register():
 
     pass_bcrypt = bcrypt.generate_password_hash(password)
 
-    new_user = User(username=username, password=pass_bcrypt)
+    new_user = User(username=username, password=pass_bcrypt, email=email)
 
     session.add(new_user)
     session.commit()
+    token = generate_token(new_user.id)
 
     return jsonify({"success": "El usuario ha sido registrado exitosamente.",
-                    "userid": new_user.id}), 201
+                    "token": token}), 201
 
 
 @app.route("/logout", methods=["POST"])
@@ -108,5 +109,5 @@ def get_user(userid):
     return jsonify({
         "id": user.id,
         "username": user.username,
-        "email": user.email
+        "email": user.email,
     }), 200

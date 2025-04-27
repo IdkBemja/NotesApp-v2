@@ -1,8 +1,11 @@
+from app.utils.auth_utils import is_token_blacklisted
 import jwt
 
 from flask import render_template as page
-from app import app, user_controller
+from app import app
 from app.services.database import BlacklistedToken, session
+
+from app.controllers import user_controller
 
 from flask import request, jsonify
 from datetime import datetime, timedelta
@@ -10,11 +13,6 @@ from datetime import datetime, timedelta
 @app.route("/")
 def index():
     return page("app.html")
-
-# JWT Usage
-def is_token_blacklisted(token):
-    blacklisted = session.query(BlacklistedToken).filter_by(token=token).first()
-    return blacklisted is not None
 
 @app.route("/protected", methods=["GET"])
 def protected():
