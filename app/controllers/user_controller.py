@@ -70,7 +70,7 @@ def register():
     if email_exists:
         return jsonify({"message": "El correo electrónico ya existe en el sistema."}), 409
 
-    pass_bcrypt = bcrypt.generate_password_hash(password)
+    pass_bcrypt = bcrypt.generate_password_hash(password).decode('utf-8')
 
     new_user = User(username=username, password=pass_bcrypt, email=email)
 
