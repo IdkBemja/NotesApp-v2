@@ -53,9 +53,13 @@ class BlacklistedToken(Base):
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
 
 def init_db():
-    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///database.db")
+    DATABASE_URL = os.getenv("DATABASE_URL")
+    if not DATABASE_URL:
+        raise ValueError("La variable de entorno DATABASE_URL no está configurada.")
+    
     engine = create_engine(DATABASE_URL)
 
+    # Crea las tablas en la base de datos si no existen
     Base.metadata.create_all(engine)
     
     Session = sessionmaker(bind=engine)
