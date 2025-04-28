@@ -70,7 +70,7 @@ async function showhomepage(){
     try {
         lastnote = await protectedRequest(`/notes/latest/${userid}`, 'GET');
         if (!lastnote || lastnote.error) {
-            lastnote = null; // Si no hay notas, dejamos `lastnote` como null
+            lastnote = null;
         }
     } catch (error) {
         console.error('Error al obtener la última nota:', error);
@@ -133,7 +133,7 @@ async function showNotes() {
         <div class="notes-list">
             ${notes.map(note => `
                 <div class="note-item">
-                    <h2>${note.title}</h2>
+                    <h2 class="note-title">${note.title}</h2>
                     <p class="note-content">${note.content}</p>
                     <p class="note-date">Fecha de creación: ${note.created_at}</p>
                     <div class="note-actions">
@@ -211,7 +211,7 @@ async function editNote(noteId) {
         <div class="edit-note">
             <form id="edit-note-form">
                 <label for="title">Título</label>
-                <input type="text" id="title" name="title" maxlength="20" value="${noteData.title}" required>
+                <input type="text" id="title" name="title" maxlength="10" value="${noteData.title}" required>
                 <label for="content">Contenido</label>
                 <textarea id="content" name="content" maxlength="255" required>${noteData.content}</textarea>  
                 <button type="submit" id="edit-note-submit">Actualizar Nota</button>

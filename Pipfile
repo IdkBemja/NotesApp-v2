@@ -8,6 +8,7 @@ flask = "*"
 flask-bcrypt = "*"
 sqlalchemy = "*"
 pyjwt = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 

@@ -88,8 +88,6 @@ function showAlert(message) {
         console.error("El contenedor '.alert' no es hijo de '.register-section' ni de '.login-section'.");
         return;
     }
-
-    // Mostrar el mensaje en el contenedor '.alert'
     alertDiv.innerHTML = message;
     alertDiv.style.display = 'block';
 }
