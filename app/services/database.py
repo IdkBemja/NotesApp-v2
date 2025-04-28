@@ -57,9 +57,11 @@ def init_db():
     if not DATABASE_URL:
         raise ValueError("La variable de entorno DATABASE_URL no está configurada.")
     
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    
     engine = create_engine(DATABASE_URL)
 
-    # Crea las tablas en la base de datos si no existen
     Base.metadata.create_all(engine)
     
     Session = sessionmaker(bind=engine)
