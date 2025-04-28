@@ -329,4 +329,12 @@ footer {
     #add-note-form, #edit-note-form, .note-item, .homepage-lastnote {
         transform: scale(0.8);
     }
+    .homepage {
+        transform: scale(0.9);
+    }
+
+    #logout {
+        margin-top: 20px;
+    }
+
 }
