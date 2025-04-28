@@ -20,7 +20,7 @@ This simple note application uses:
 [![Framework Icons](https://img.shields.io/badge/Framework_Icons-Bootstrap-purple?logo=bootstrap)](https://icons.getbootstrap.com/#install)
 
 ## Live Test
-coming soon
+https://notesapp.idkbemja.me
 
 ## Installation
 
