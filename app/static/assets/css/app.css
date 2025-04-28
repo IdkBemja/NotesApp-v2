@@ -324,3 +324,9 @@ footer {
     color: #fff;
     font-size: 14px;
 }
+
+@media (max-width: 768px) {
+    #add-note-form, #edit-note-form, .note-item, .homepage-lastnote {
+        transform: scale(0.8);
+    }
+}
