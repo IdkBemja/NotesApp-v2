@@ -53,9 +53,15 @@ class BlacklistedToken(Base):
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
 
 def init_db():
-    engine = create_engine('sqlite:///database.db')
+    temp_dir = "/tmp"
+    
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+    
+    db_path = os.path.join(temp_dir, 'database.db')
+    engine = create_engine(f'sqlite:///{db_path}')
 
-    if not os.path.exists('database.db'):
+    if not os.path.exists(db_path):
         Base.metadata.create_all(engine)
     
     Session = sessionmaker(bind=engine)
