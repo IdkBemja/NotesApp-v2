@@ -32,7 +32,7 @@ Install with python pipenv
  cd NotesApp-v2
  python -m pipenv install -r requirements.txt
  python -m pipenv shell
- python app.py
+ python main.py
 ```
     
 ## Login Credentials
