@@ -8,39 +8,26 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-note_category = Table('note_category', Base.metadata,
-    Column('note_id', Integer, ForeignKey('notes.id')),
-    Column('category_id', Integer, ForeignKey('categories.id'))
-)
-
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
+    first_name = Column(String(45))
+    last_name = Column(String(45))
+    birth_date = Column(DateTime)
     username = Column(String(45))
     email = Column(String(255), unique=True)
     password = Column(String(255))
+    about_me = Column(String(255))
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
     notes = relationship('Note', back_populates='user')
-
-class Category(Base):
-    __tablename__ = 'categories'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(45))
-    notes = relationship(
-        'Note',
-        secondary=note_category,
-        backref=backref('categories')
-    )
 
 class Note(Base):
     __tablename__ = 'notes'
     id = Column(Integer, primary_key=True)
     title = Column(String(45))
     content = Column(String(255))
-    # status = Column(String(8))
-    # category = Column(String(45))
-    # tags = Column(String(255))
+    status = Column(String(8))
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
     user_id = Column(Integer, ForeignKey('users.id'))
