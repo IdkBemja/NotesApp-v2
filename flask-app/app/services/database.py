@@ -18,6 +18,7 @@ class User(Base):
     email = Column(String(255), unique=True)
     password = Column(String(255))
     about_me = Column(String(255))
+    privilege = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
     notes = relationship('Note', back_populates='user')

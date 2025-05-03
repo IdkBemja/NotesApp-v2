@@ -10,11 +10,17 @@ from datetime import datetime, timedelta
 bcrypt = Bcrypt(app)
 
 def generate_token(user_id):
+    user = session.query(User).filter_by(id=user_id).first()
+
     payload = {
         "user_id": user_id,
-        "username": session.query(User).filter_by(id=user_id).first().username,
-        "exp": datetime.utcnow() + timedelta(hours=1)  # Expira en 1 hora
+        "username": user.username,
+        "exp": datetime.utcnow() + timedelta(hours=1),  # Expira en 1 hora
     }
+
+    if user.privilege == 1:
+        payload["privilege"] = "yes"
+
     token = jwt.encode(payload, app.secret_key, algorithm="HS256")
     return token
 
