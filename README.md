@@ -54,7 +54,7 @@ This note-taking application leverages the following technologies:
   - Token-based secure authentication.
 
 ### **Upcoming Integration**
-- ![Laravel](https://img.shields.io/badge/Laravel-PHP_Framework-red?logo=laravel&logoColor=white)
+- ![Slim](https://img.shields.io/badge/Slim-Slim4_Framework-red?logo=php&logoColor=white)
   - Planned integration for hybrid backend functionality.
 
 ---
