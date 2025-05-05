@@ -19,6 +19,9 @@ def token_required(f):
 
         try:
             token = token.split(" ")[1]  # Eliminar el prefijo "Bearer"
+            if is_token_blacklisted(token):
+                return jsonify({"message": "Token ha sido revocado"}), 401
+            
             data = jwt.decode(token, app.secret_key, algorithms=["HS256"])
 
             if data.get("privilege") != "yes":

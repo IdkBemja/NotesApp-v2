@@ -37,7 +37,7 @@ async function refreshToken() {
     const token = localStorage.getItem("token");
 
     try {
-        const response = await fetch("/refresh-token", {
+        const response = await fetch("/api/refresh-token", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,

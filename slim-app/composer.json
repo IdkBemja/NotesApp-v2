@@ -1,0 +1,9 @@
+{
+    "require": {
+        "slim/slim": "^4.0",
+        "slim/psr7": "^1.7",
+        "guzzlehttp/guzzle": "^7.9",
+        "firebase/php-jwt": "^6.11",
+        "slim/twig-view": "^3.4"
+    }
+}

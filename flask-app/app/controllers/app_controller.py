@@ -33,7 +33,7 @@ def protected():
     except jwt.InvalidTokenError:
         return jsonify({"message": "Token inválido."}), 401
     
-@app.route("/refresh-token", methods=["POST"])
+@app.route("/api/refresh-token", methods=["POST"])
 def refresh_token():
     token = request.headers.get("Authorization")
     if not token:

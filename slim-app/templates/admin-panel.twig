@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo - NotesApp</title>
+    <link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+    <header>
+        <h1>Panel Administrativo</h1>
+        <nav>
+            <ul>
+                <li><a href="/admin">Inicio</a></li>
+                <li><a href="/admin/users">Usuarios</a></li>
+                <li><a href="/admin/notes">Notas</a></li>
+                <li><a href="/logout">Cerrar sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Bienvenido al dashboard</h2>
+        <div class="content">
+            {{ data | raw}}
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2023 NotesApp. Todos los derechos reservados.</p>
+    </footer>
+</body>
+<script src="/assets/js/app.js"></script>
+</html>
