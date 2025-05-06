@@ -3,7 +3,7 @@ import jwt
 from flask import render_template, request, jsonify
 from app import app
 from app.utils.auth_utils import is_token_blacklisted
-from app.services.database import session, Note, Category, User
+from app.services.database import session, Note, User
 from datetime import datetime, timezone
 
 

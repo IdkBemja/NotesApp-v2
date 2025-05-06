@@ -1,3 +1,5 @@
 prompt-slim-php.txt
 .vercel
 .env
+.code-workspace
+\vendor

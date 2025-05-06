@@ -1,8 +1,9 @@
 <?php
 
 use Slim\App;
+use App\Controllers\AdminController;
 
 return function (App $app) {
-    $app->get("/admin/adashboard", \App\Controllers\DashboardController::class . ":dashboard");
-    $app->get('/admin/users', \App\Controllers\AdminController::class . ':listUsers');
+    $app->get('/admin/dashboard', [AdminController::class, 'dashboard']);
+    $app->get('/admin/users', [AdminController::class, 'listUsers']);
 };

@@ -11,16 +11,31 @@ class AuthProxy
 {
     public function __invoke(Request $request, $handler): Response
     {
-        $authHeader = $request->getHeaderLine('Authorization');
-        if (!$authHeader) {
-            throw new \Exception('Authorization header missing', 401);
+
+        if ($request->getMethod() === 'OPTIONS') {
+            $response = new \Slim\Psr7\Response();
+            return $response
+                ->withHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5000')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                ->withHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Requested-With')
+                ->withHeader('Access-Control-Allow-Credentials', 'true')
+                ->withStatus(200);
         }
 
-        $client = new Client(['base_uri' => 'https://notesapp.idkbemja.me']);
+        $authHeader = $request->getHeaderLine('Authorization');
+        if (!$authHeader) {
+            $response = new \Slim\Psr7\Response();
+            $response->getBody()->write(json_encode(['error' => 'Authorization header missing']));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(401);
+        }
+
+        $client = new Client(['base_uri' => $_ENV['BASE_URL']]);
 
         try {
             // Validar el token con Flask
-            $validateResponse = $client->post('/api/protected', [
+            $validateResponse = $client->get('/api/protected', [
                 'headers' => ['Authorization' => $authHeader]
             ]);
 

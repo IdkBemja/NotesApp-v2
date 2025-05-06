@@ -12,7 +12,7 @@ class AdminController
     public function dashboard(Request $request, Response $response, $args): Response
     {
         try {
-            $client = new Client(['base_uri' => 'https://notesapp.idkbemja.me']);
+            $client = new Client(['base_uri' => $_ENV['BASE_URL']]);
             $authHeader = $request->getHeaderLine('Authorization');
 
             $flaskResponse = $client->get('/api/protected', [
@@ -35,7 +35,7 @@ class AdminController
 
     private function handleError(Request $request, Response $response, \Exception $e): Response
     {
-        $statusCode = $e->getCode() ?: 500; // Si no hay código, usar 500 por defecto
+        $statusCode = $e->getCode() ?: 500;
         $message = $e->getMessage();
 
         $view = Twig::fromRequest($request);

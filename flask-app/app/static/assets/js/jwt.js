@@ -7,7 +7,15 @@ function getUserFromToken() {
 
     try {
         const payload = JSON.parse(atob(token.split('.')[1])); // Decodificar el payload del token
-        return payload.user_id;
+
+        if(!payload.privilege) {
+            return { id: payload.user_id };
+        }
+
+        return {
+            id: payload.user_id,
+            privilege: payload.privilege
+        };
     } catch (error) {
         console.error("Error al decodificar el token:", error);
         return null;

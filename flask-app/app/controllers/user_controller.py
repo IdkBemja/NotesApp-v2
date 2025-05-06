@@ -22,6 +22,7 @@ def generate_token(user_id):
         payload["privilege"] = "yes"
 
     token = jwt.encode(payload, app.secret_key, algorithm="HS256")
+    print(f"Payload: {payload}")
     return token
 
 @app.route("/login", methods=["POST"])

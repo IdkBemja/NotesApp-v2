@@ -24,12 +24,23 @@ $( document ).ready(function() {
     });
 });
 
-function showDashboard(){
+async function showDashboard(){
     const main_container = document.getElementById('main-container');
+
+    const user = getUserFromToken();
+    let adminNavItem = '';
+    if (user && user.privilege) {
+        adminNavItem = `<button id="admin"><i class="bi bi-shield-lock"></i> Administrar</button>`;
+
+    }
+    
     const dashboardHTML = `
     <section class="dashboard-section">
         <div class="dashboard-header">
-            <button id="logout"><i class="bi bi-power"></i></button>
+            <div class="dashboard-btns">
+                <button id="logout"><i class="bi bi-power"></i></button>
+                ${adminNavItem}
+            </div>
             <ul class="dashboard-nav">
                 <li id="home"><i class="bi bi-house"></i> Inicio</li>
                 <li id="mynotes"><i class="bi bi-archive"></i> Mis Notas</li>
@@ -41,6 +52,40 @@ function showDashboard(){
     `
 
     main_container.innerHTML = dashboardHTML;
+
+    const adminButton = document.getElementById('admin');
+    if (adminButton) {
+        adminButton.addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('No tienes un token válido.');
+                return;
+            }
+
+            try {
+                // Enviar el token directamente al endpoint de flask
+                const resp = await fetch("/api/admin/dashboard", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    },
+                });
+
+                if (resp.ok) {
+                    const html = await resp.text();
+                    document.open();
+                    document.write(html);
+                    document.close();
+                } else {
+                    console.error("Error del servidor:", resp.status, await resp.text());
+                    alert("No se pudo cargar el panel admin");
+                 }
+                } catch (err) {
+                    console.error("Error al conectar:", err);
+                    alert("Error de conexión");
+                }
+        });
+    }
     showhomepage();
 }
 
@@ -54,12 +99,12 @@ async function showhomepage(){
 
     const userid = getUserFromToken();
 
-    if (!userid) {
+    if (!userid.id) {
         dashboard_container.innerHTML = `<p>Error: No se pudo obtener el ID de usuario.</p>`;
         return;
     }
 
-    const user = await fetchUserData(userid);
+    const user = await fetchUserData(userid.id);
 
     if (!user) {
         dashboard_container.innerHTML = `<p>Error: No se pudo obtener la información del usuario.</p>`;
@@ -68,7 +113,7 @@ async function showhomepage(){
 
     let lastnote;
     try {
-        lastnote = await protectedRequest(`/notes/latest/${userid}`, 'GET');
+        lastnote = await protectedRequest(`/notes/latest/${userid.id}`, 'GET');
         if (!lastnote || lastnote.error) {
             lastnote = null;
         }

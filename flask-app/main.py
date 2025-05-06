@@ -4,4 +4,4 @@ from app.controllers import user_controller, app_controller, note_controller, ap
 from app.services import database
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True, host="localhost", port=5000)

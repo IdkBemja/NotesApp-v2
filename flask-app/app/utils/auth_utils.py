@@ -1,3 +1,4 @@
+import os
 import jwt
 
 from app import app
@@ -34,3 +35,15 @@ def token_required(f):
 
         return f(*args, **kwargs)
     return decorated
+
+def require_allowed_origin(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        allowed_origin = os.getenv("ALLOWED_ORIGIN")
+        origin = request.headers.get('Origin') or request.headers.get('Referer')
+
+        if not origin or not origin.startswith(allowed_origin):
+            return jsonify({"error": "Access denied: Invalid origin"}), 403
+
+        return f(*args, **kwargs)
+    return decorated_function
